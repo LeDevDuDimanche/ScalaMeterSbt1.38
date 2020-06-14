@@ -70,6 +70,5 @@ lazy val coroutines = (project in file("."))
     project
     .settings(
       shared,
-      javaOptions ++= Seq("-Xms1G", "-Xmx1G"),
     ).dependsOn(coroutines )
   

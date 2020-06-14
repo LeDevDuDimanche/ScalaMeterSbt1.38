@@ -8,7 +8,7 @@ import org.openjdk.jmh.infra.Blackhole
 import scala.collection._
 
  
-@State(Scope.Benchmark) //All threads running the benchmark share the same state object.
+@State(Scope.Thread) //All threads running the benchmark share the same state object.
 @Warmup(iterations = 5)    // translation of     exec.minWarmupRuns -> 40, exec.maxWarmupRuns -> 80,
 @BenchmarkMode(Array(Mode.All))
 @Measurement(iterations = 10) //"exec.benchRuns 
@@ -62,7 +62,8 @@ class TreeIteratorBenchJMH {
     }
   }
 
-  @Param(Array("50000", "100000", "150000", "200000", "250000"))
+  // @Param(Array("50000", "100000", "150000", "200000", "250000"))
+  @Param(Array("50000", "150000", "250000"))
   var size: Int = _
 
   def genTree(sz: Int): Tree = {
