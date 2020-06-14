@@ -2,7 +2,7 @@
 val shared = Seq(
   organization := "com.storm-enroute",
   version      := "0.8.0",
-  scalaVersion := "2.12.3",
+  scalaVersion := "2.12.8",
   )
   
 lazy val scalaReflect = Def.setting { "org.scala-lang" % "scala-reflect" % scalaVersion.value }
@@ -37,7 +37,10 @@ lazy val coroutinesExtra = (project in file("coroutines-extra"))
 
 lazy val coroutines = (project in file("."))
   .settings(
+    shared,
     name := "coroutines",
+    javaOptions ++= Seq("-Xms1G", "-Xmx1G"),
+
 
     libraryDependencies ++=  
       Seq(
@@ -45,11 +48,11 @@ lazy val coroutines = (project in file("."))
         parserComb.value,
         scalaReflect.value,
         "org.scala-lang.modules" %% "scala-async" % "0.10.0"  % "test;bench",
-        "com.storm-enroute" % "scalameter_2.12" % "0.19" % "test;bench"
+        // "com.storm-enroute" % "scalameter_2.12" % "0.19" % "test;bench"
       ),
 
 
-    testFrameworks += new TestFramework("org.scalameter.ScalaMeterFramework"),
+    // testFrameworks += new TestFramework("org.scalameter.ScalaMeterFramework"),
 
     parallelExecution in Test := false,
 
@@ -61,5 +64,12 @@ lazy val coroutines = (project in file("."))
     coroutinesCommon
   ) dependsOn(
     coroutinesCommon % "compile->compile;test->test"
-  )
+  ) enablePlugins(JmhPlugin)
+
+  lazy val jmhBenchmarks =  
+    project
+    .settings(
+      shared,
+      javaOptions ++= Seq("-Xms1G", "-Xmx1G"),
+    ).dependsOn(coroutines )
   
