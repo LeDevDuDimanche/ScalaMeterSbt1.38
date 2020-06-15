@@ -10,7 +10,7 @@ import scala.collection._
  
 @State(Scope.Thread) //All threads running the benchmark share the same state object.
 @Warmup(iterations = 5)    // translation of     exec.minWarmupRuns -> 40, exec.maxWarmupRuns -> 80,
-@BenchmarkMode(Array(Mode.All))
+@BenchmarkMode(Array(Mode.Throughput))
 @Measurement(iterations = 10) //"exec.benchRuns 
 @Fork(value = 2) //"exec.independentSamples"
 class TreeIteratorBenchJMH {
@@ -277,28 +277,28 @@ class TreeIteratorBenchJMH {
 
   /* tests */
 
-  // assert({
-  //   def leaf(x: Int) = Node(x, Empty, Empty)
-  //   val tree = Node(1,
-  //     Node(19, leaf(21), leaf(23)),
-  //     Node(3,
-  //       leaf(11),
-  //       Node(9,
-  //         leaf(5),
-  //         leaf(17))))
-  //   def rec(tree: Tree): Seq[Int] = tree match {
-  //     case Empty => Seq()
-  //     case Node(x, l, r) =>
-  //       rec(l) ++ Seq(x) ++ rec(r)
-  //   }
+  assert({
+    def leaf(x: Int) = Node(x, Empty, Empty)
+    val tree = Node(1,
+      Node(19, leaf(21), leaf(23)),
+      Node(3,
+        leaf(11),
+        Node(9,
+          leaf(5),
+          leaf(17))))
+    def rec(tree: Tree): Seq[Int] = tree match {
+      case Empty => Seq()
+      case Node(x, l, r) =>
+        rec(l) ++ Seq(x) ++ rec(r)
+    }
 
-  //   val it = new TreeIterator(tree)
-  //   def treeRec(result: Seq[Int]): Seq[Int] = {
-  //     if (it.hasNext) treeRec(result :+ it.next())
-  //     else result
-  //   }
+    val it = new TreeIterator(tree)
+    def treeRec(result: Seq[Int]): Seq[Int] = {
+      if (it.hasNext) treeRec(result :+ it.next())
+      else result
+    }
 
-  //   rec(tree) == treeRec(Seq())
-  // })
+    rec(tree) == treeRec(Seq())
+  })
 
 }
